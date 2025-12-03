@@ -1,11 +1,8 @@
 'use strict';
 
 const express = require('express');
-const { resetDatabase } = require('./data/database');
 
 function createServer() {
-  resetDatabase();
-
   const app = express();
 
   app.use(express.json());

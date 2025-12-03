@@ -1,4 +1,9 @@
-const { users, getNextUserId } = require('../data/database');
+const users = [];
+let userIdCounter = 1;
+
+function getNextUserId() {
+  return userIdCounter++;
+}
 
 function getUsers(req, res) {
   res.json(users);

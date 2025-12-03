@@ -1,4 +1,10 @@
-const { users, expenses, getNextExpenseId } = require('../data/database');
+const expenses = [];
+const users = [];
+let expenseIdCounter = 1;
+
+function getNextExpenseId() {
+  return expenseIdCounter++;
+}
 
 function listExpenses(req, res) {
   let results = [...expenses];
