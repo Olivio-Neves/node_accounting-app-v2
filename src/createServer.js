@@ -23,7 +23,7 @@ function createServer() {
   app.use('/expenses', (req, res, next) => {
     req.expenses = app.locals.expenses;
     req.expenseIdCounter = app.locals.expenseIdCounter;
-    req.users = app.locals.users; // expenses also needs reference to users
+    req.users = app.locals.users;
     next();
   });
 
