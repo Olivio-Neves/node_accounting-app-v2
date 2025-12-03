@@ -1,13 +1,7 @@
-const expenses = [];
-const users = [];
-let expenseIdCounter = 1;
-
-function getNextExpenseId() {
-  return expenseIdCounter++;
-}
-
 function listExpenses(req, res) {
+  const expenses = req.app.locals.expenses;
   let results = [...expenses];
+
   const { userId, categories, from, to } = req.query;
 
   if (userId) {
@@ -32,7 +26,9 @@ function listExpenses(req, res) {
 }
 
 function listExpensesById(req, res) {
+  const expenses = req.app.locals.expenses;
   const id = parseInt(req.params.id);
+
   const expense = expenses.find((e) => e.id === id);
 
   if (!expense) {
@@ -43,6 +39,9 @@ function listExpensesById(req, res) {
 }
 
 function createExpenses(req, res) {
+  const expenses = req.app.locals.expenses;
+  const users = req.app.locals.users;
+
   const { userId, spentAt, title, amount, category, note } = req.body;
 
   if (
@@ -61,8 +60,16 @@ function createExpenses(req, res) {
     return res.status(400).json({ message: 'User not found' });
   }
 
+  if (typeof amount !== 'number' || amount <= 0) {
+    return res.status(400).json({ message: 'Invalid amount' });
+  }
+
+  if (isNaN(Date.parse(spentAt))) {
+    return res.status(400).json({ message: 'Invalid Data' });
+  }
+
   const expense = {
-    id: getNextExpenseId(),
+    id: expenses.length + 1,
     userId,
     spentAt,
     title,
@@ -72,10 +79,14 @@ function createExpenses(req, res) {
   };
 
   expenses.push(expense);
+
   res.status(201).json(expense);
 }
 
 function putExpensesById(req, res) {
+  const expenses = req.app.locals.expenses;
+  const users = req.app.locals.users;
+
   const id = parseInt(req.params.id);
   const { userId, spentAt, title, amount, category, note } = req.body;
 
@@ -99,6 +110,14 @@ function putExpensesById(req, res) {
 
   if (!userExists) {
     return res.status(400).json({ message: 'User not found' });
+  }
+
+  if (typeof amount !== 'number' || amount <= 0) {
+    return res.status(400).json({ message: 'Invalid amount' });
+  }
+
+  if (isNaN(Date.parse(spentAt))) {
+    return res.status(400).json({ message: 'Invalid Data' });
   }
 
   expenses[index] = {
@@ -115,6 +134,9 @@ function putExpensesById(req, res) {
 }
 
 function patchExpensesById(req, res) {
+  const expenses = req.app.locals.expenses;
+  const users = req.app.locals.users;
+
   const id = parseInt(req.params.id);
   const index = expenses.findIndex((e) => e.id === id);
 
@@ -131,10 +153,13 @@ function patchExpensesById(req, res) {
   }
 
   expenses[index] = { ...expenses[index], ...req.body };
+
   res.json(expenses[index]);
 }
 
 function deleteExpensesById(req, res) {
+  const expenses = req.app.locals.expenses;
+
   const id = parseInt(req.params.id);
   const index = expenses.findIndex((e) => e.id === id);
 
