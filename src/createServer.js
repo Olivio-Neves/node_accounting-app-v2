@@ -6,8 +6,6 @@ function createServer() {
   const app = express();
 
   app.use(express.json());
-
-  // Agora cada server tem seu próprio banco!
   app.locals.users = [];
   app.locals.expenses = [];
   app.locals.userIdCounter = 1;
